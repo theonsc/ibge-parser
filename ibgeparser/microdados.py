@@ -171,7 +171,7 @@ class Microdados:
                 log.debug('Arquivo do estado extraído em: {}'.format(arquivo_estado))
 
                 # conversão para csv
-                data = pd.read_fwf(arquivo_estado, colspecs=div_columns[descricao_modalidade], chunksize=100000)
+                data = pd.read_fwf(arquivo_estado, colspecs=div_columns[descricao_modalidade], chunksize=10000)
                 data.columns = ibge_datasets[descricao_modalidade]['VAR'].tolist()
 
                 # salvando o csv
