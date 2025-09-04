@@ -171,18 +171,24 @@ class Microdados:
                 log.debug('Arquivo do estado extraído em: {}'.format(arquivo_estado))
 
                 # conversão para csv
-                data = pd.read_fwf(arquivo_estado, colspecs=div_columns[descricao_modalidade], chunksize=10000)
-                data.columns = ibge_datasets[descricao_modalidade]['VAR'].tolist()
-
-                # salvando o csv
-                header_now = header
-                arquivo_csv = os.path.join(pasta_trabalho, '{}_{}.csv'.format(nome_arquivo_modalidade[:-4], sigla))
-                for chunk in data:
-                    log.debug(f'Escrevendo chunk de dados no arquivo {arquivo_csv} com header {header_now}')
-                    if header_now:
-                        chunk.to_csv(arquivo_csv, encoding="utf-8-sig", header=data.columns, mode='w')
-                    else:
-                        chunk.to_csv(arquivo_csv, encoding="utf-8-sig", header=header_now, mode='a')
+                data_iter = pd.read_fwf(
+                    arquivo_estado,
+                    colspecs=div_columns[descricao_modalidade],
+                    chunksize=100000
+                )
+                
+                columns = ibge_datasets[descricao_modalidade]['VAR'].tolist()
+                
+                header_now = True
+                for chunk in data_iter:
+                    chunk.columns = columns
+                    chunk.to_csv(
+                        arquivo_csv,
+                        encoding="utf-8-sig",
+                        header=columns if header_now else False,
+                        mode='w' if header_now else 'a',
+                        index=False
+                    )
                     header_now = False
                 # data.to_csv(arquivo_csv, encoding="utf-8-sig", header=header)
 
