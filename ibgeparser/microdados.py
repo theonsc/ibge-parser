@@ -174,7 +174,7 @@ class Microdados:
                 data_iter = pd.read_fwf(
                     arquivo_estado,
                     colspecs=div_columns[descricao_modalidade],
-                    chunksize=100000
+                    chunksize=1000
                 )
                 
                 columns = ibge_datasets[descricao_modalidade]['VAR'].tolist()
